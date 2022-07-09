@@ -1,0 +1,68 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://Simon.cs" type="Script" id=1]
+[ext_resource path="res://gfx/CGB02-yellow_S_btn.png" type="Texture" id=2]
+[ext_resource path="res://gfx/CGB02-green_S_btn.png" type="Texture" id=3]
+[ext_resource path="res://gfx/CGB02-red_S_btn.png" type="Texture" id=4]
+[ext_resource path="res://gfx/CGB02-blue_S_btn.png" type="Texture" id=5]
+
+[node name="Simon" type="Node2D"]
+script = ExtResource( 1 )
+
+[node name="BtnA" type="TouchScreenButton" parent="."]
+position = Vector2( 214, 51 )
+normal = ExtResource( 2 )
+shape_centered = false
+shape_visible = false
+
+[node name="BtnB" type="TouchScreenButton" parent="."]
+position = Vector2( 413, 57 )
+normal = ExtResource( 4 )
+
+[node name="BtnC" type="TouchScreenButton" parent="."]
+position = Vector2( 210, 257 )
+normal = ExtResource( 3 )
+
+[node name="BtnD" type="TouchScreenButton" parent="."]
+position = Vector2( 425, 256 )
+normal = ExtResource( 5 )
+
+[node name="BtnAOn" type="Sprite" parent="."]
+position = Vector2( 693, 53 )
+texture = ExtResource( 2 )
+centered = false
+
+[node name="BtnBOn" type="Sprite" parent="."]
+position = Vector2( 856, 58 )
+texture = ExtResource( 4 )
+centered = false
+
+[node name="BtnCOn" type="Sprite" parent="."]
+position = Vector2( 692, 263 )
+texture = ExtResource( 3 )
+centered = false
+
+[node name="BtnDOn" type="Sprite" parent="."]
+position = Vector2( 856, 249 )
+texture = ExtResource( 5 )
+centered = false
+
+[node name="BtnAOff" type="Sprite" parent="."]
+position = Vector2( 693, 53 )
+texture = ExtResource( 2 )
+centered = false
+
+[node name="BtnBOff" type="Sprite" parent="."]
+position = Vector2( 856, 58 )
+texture = ExtResource( 4 )
+centered = false
+
+[node name="BtnCOff" type="Sprite" parent="."]
+position = Vector2( 692, 263 )
+texture = ExtResource( 3 )
+centered = false
+
+[node name="BtnDOff" type="Sprite" parent="."]
+position = Vector2( 856, 249 )
+texture = ExtResource( 5 )
+centered = false
