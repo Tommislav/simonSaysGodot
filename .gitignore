@@ -3,3 +3,6 @@
 *.swp
 .mono
 .import
+build
+android
+.idea

@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=15 format=2]
 
 [ext_resource path="res://Simon.cs" type="Script" id=1]
 [ext_resource path="res://gfx/CGB02-yellow_S_btn.png" type="Texture" id=2]
@@ -10,45 +10,53 @@
 [ext_resource path="res://gfx/CGB02-green_S_btn_off.png" type="Texture" id=8]
 [ext_resource path="res://gfx/CGB02-blue_S_btn_off.png" type="Texture" id=9]
 [ext_resource path="res://gfx/transparent.png" type="Texture" id=10]
+[ext_resource path="res://sfx/EddaVoff2.wav" type="AudioStream" id=11]
+[ext_resource path="res://sfx/EddaVoff3.wav" type="AudioStream" id=12]
+[ext_resource path="res://sfx/EddaVoff4.wav" type="AudioStream" id=13]
+[ext_resource path="res://sfx/EddaVoff1.wav" type="AudioStream" id=14]
 
 [node name="Simon" type="Node2D"]
 script = ExtResource( 1 )
+sound1 = ExtResource( 13 )
+sound2 = ExtResource( 14 )
+sound3 = ExtResource( 11 )
+sound4 = ExtResource( 12 )
 
 [node name="BtnA" type="TouchScreenButton" parent="."]
-position = Vector2( 214, 51 )
+position = Vector2( 706, 666 )
 normal = ExtResource( 10 )
 shape_centered = false
 shape_visible = false
 
 [node name="BtnB" type="TouchScreenButton" parent="."]
-position = Vector2( 413, 57 )
+position = Vector2( 718, 689 )
 normal = ExtResource( 10 )
 
 [node name="BtnC" type="TouchScreenButton" parent="."]
-position = Vector2( 210, 257 )
+position = Vector2( 670, 664 )
 normal = ExtResource( 10 )
 
 [node name="BtnD" type="TouchScreenButton" parent="."]
-position = Vector2( 425, 256 )
+position = Vector2( 740, 672 )
 normal = ExtResource( 10 )
 
 [node name="BtnAOn" type="Sprite" parent="."]
-position = Vector2( 716, 19 )
+position = Vector2( 38, 232 )
 texture = ExtResource( 2 )
 centered = false
 
 [node name="BtnBOn" type="Sprite" parent="."]
-position = Vector2( 884, 24 )
+position = Vector2( 326, 200 )
 texture = ExtResource( 4 )
 centered = false
 
 [node name="BtnCOn" type="Sprite" parent="."]
-position = Vector2( 712, 178 )
+position = Vector2( 20, 500 )
 texture = ExtResource( 3 )
 centered = false
 
 [node name="BtnDOn" type="Sprite" parent="."]
-position = Vector2( 882, 189 )
+position = Vector2( 326, 500 )
 texture = ExtResource( 5 )
 centered = false
 
@@ -71,3 +79,5 @@ centered = false
 position = Vector2( 879, 459 )
 texture = ExtResource( 9 )
 centered = false
+
+[node name="AudioPlayer" type="AudioStreamPlayer2D" parent="."]

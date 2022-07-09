@@ -3,34 +3,74 @@ using System;
 
 public class Simon : Node {
 
-    private Node2D[] buttons;
-    private Node2D[] fakeButtons;
+    [Export]
+    public AudioStream sound1;
+    [Export]
+    public AudioStream sound2;
+    [Export]
+    public AudioStream sound3;
+    [Export]
+    public AudioStream sound4;
+    
+    private Node2D[] clickables;
+    private Node2D[] buttonsOn;
+    private Node2D[] buttonsOff;
+    private AudioStream[] sounds;
+    private AudioStreamPlayer2D audioPlayer;
 
 
     public override void _Ready() {
         GD.Print("hej");
 
-        buttons = new Node2D[4];
-        fakeButtons = new Node2D[4];
+        audioPlayer = GetNode<AudioStreamPlayer2D>("AudioPlayer");
+
+        sounds = new[] { sound1, sound2, sound3, sound4 };
+        
+        clickables = new Node2D[4];
+        buttonsOn = new Node2D[4];
+        buttonsOff = new Node2D[4];
 
         string[] buttonLabels = new []{
             "BtnA", "BtnB", "BtnC", "BtnD"
         };
 
 
-        //var viewportSize = GetViewport().Size;
-        
+        var viewportSize = GetViewport().Size;
+        float w = Mathf.Min(viewportSize.x, viewportSize.y);
+        float margin = w / 20f;
+        w -= margin * 3;
+        float buttonExpectedW = w / 2f;
+        float halfW = viewportSize.x / 2f;
+        float halfH = viewportSize.y / 2f;
 
+        // assume all buttons are same size (for now)
+        var size = GetNode<Sprite>(buttonLabels[0] + "On").Texture.GetSize();
+        Vector2 scale = new Vector2(buttonExpectedW / size.x, buttonExpectedW / size.y);
+
+        Vector2[] positions = new[] {
+            new Vector2(margin, margin),
+            new Vector2(buttonExpectedW + margin * 2, margin),
+            new Vector2(margin, buttonExpectedW + margin * 2),
+            new Vector2(buttonExpectedW + margin * 2, buttonExpectedW + margin * 2)
+        };
+        
         for (int i=0; i<4; i++) {
-            var n = GetNode(buttonLabels[i]);
+            buttonsOn[i] = GetNode<Node2D>(buttonLabels[i] + "On");
+            
+            
+            var n = GetNode<Node2D>(buttonLabels[i]);
             n.Connect("pressed", this, buttonLabels[i] + "Dn");
             n.Connect("released", this, buttonLabels[i] + "Up");
+            clickables[i] = n;
+            buttonsOff[i] = GetNode<Node2D>(buttonLabels[i] + "Off");
 
-            buttons[i] = (Node2D)n;
-            fakeButtons[i] = GetNode<Node2D>(buttonLabels[i] + "Fake");
-
-            fakeButtons[i].Position = buttons[i].Position;
-            fakeButtons[i].Visible = false;
+            buttonsOn[i].Scale = scale;
+            buttonsOn[i].Position = positions[i];
+            buttonsOff[i].Scale = scale;
+            buttonsOff[i].Position = positions[i];
+            clickables[i].Scale = scale;
+            clickables[i].Position = positions[i];
+            buttonsOn[i].Visible = false;
         }
 
         
@@ -48,10 +88,19 @@ public class Simon : Node {
 
 
     private void OnButtonDn(int i) {
-        GD.Print("Button down: " + i);
+        audioPlayer.Stream = sounds[i];
+        audioPlayer.Play();
+        SetButtonState(i, true);
     }
     private void OnButtonUp(int i) {
-        GD.Print("Button up: " + i);
+        SetButtonState(i, false);
+    }
+
+    private void SetButtonState(int b, bool on) {
+        for(int i = 0; i < 4; i++) {
+            buttonsOff[i].Visible = b != i || !on;
+            buttonsOn[i].Visible = b == i && on;
+        }
     }
 
 
