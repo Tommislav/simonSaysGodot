@@ -1,68 +1,73 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=11 format=2]
 
 [ext_resource path="res://Simon.cs" type="Script" id=1]
 [ext_resource path="res://gfx/CGB02-yellow_S_btn.png" type="Texture" id=2]
 [ext_resource path="res://gfx/CGB02-green_S_btn.png" type="Texture" id=3]
 [ext_resource path="res://gfx/CGB02-red_S_btn.png" type="Texture" id=4]
 [ext_resource path="res://gfx/CGB02-blue_S_btn.png" type="Texture" id=5]
+[ext_resource path="res://gfx/CGB02-yellow_S_btn_off.png" type="Texture" id=6]
+[ext_resource path="res://gfx/CGB02-red_S_btn_off.png" type="Texture" id=7]
+[ext_resource path="res://gfx/CGB02-green_S_btn_off.png" type="Texture" id=8]
+[ext_resource path="res://gfx/CGB02-blue_S_btn_off.png" type="Texture" id=9]
+[ext_resource path="res://gfx/transparent.png" type="Texture" id=10]
 
 [node name="Simon" type="Node2D"]
 script = ExtResource( 1 )
 
 [node name="BtnA" type="TouchScreenButton" parent="."]
 position = Vector2( 214, 51 )
-normal = ExtResource( 2 )
+normal = ExtResource( 10 )
 shape_centered = false
 shape_visible = false
 
 [node name="BtnB" type="TouchScreenButton" parent="."]
 position = Vector2( 413, 57 )
-normal = ExtResource( 4 )
+normal = ExtResource( 10 )
 
 [node name="BtnC" type="TouchScreenButton" parent="."]
 position = Vector2( 210, 257 )
-normal = ExtResource( 3 )
+normal = ExtResource( 10 )
 
 [node name="BtnD" type="TouchScreenButton" parent="."]
 position = Vector2( 425, 256 )
-normal = ExtResource( 5 )
+normal = ExtResource( 10 )
 
 [node name="BtnAOn" type="Sprite" parent="."]
-position = Vector2( 693, 53 )
+position = Vector2( 716, 19 )
 texture = ExtResource( 2 )
 centered = false
 
 [node name="BtnBOn" type="Sprite" parent="."]
-position = Vector2( 856, 58 )
+position = Vector2( 884, 24 )
 texture = ExtResource( 4 )
 centered = false
 
 [node name="BtnCOn" type="Sprite" parent="."]
-position = Vector2( 692, 263 )
+position = Vector2( 712, 178 )
 texture = ExtResource( 3 )
 centered = false
 
 [node name="BtnDOn" type="Sprite" parent="."]
-position = Vector2( 856, 249 )
+position = Vector2( 882, 189 )
 texture = ExtResource( 5 )
 centered = false
 
 [node name="BtnAOff" type="Sprite" parent="."]
-position = Vector2( 693, 53 )
-texture = ExtResource( 2 )
+position = Vector2( 708, 341 )
+texture = ExtResource( 6 )
 centered = false
 
 [node name="BtnBOff" type="Sprite" parent="."]
-position = Vector2( 856, 58 )
-texture = ExtResource( 4 )
+position = Vector2( 866, 336 )
+texture = ExtResource( 7 )
 centered = false
 
 [node name="BtnCOff" type="Sprite" parent="."]
-position = Vector2( 692, 263 )
-texture = ExtResource( 3 )
+position = Vector2( 695, 462 )
+texture = ExtResource( 8 )
 centered = false
 
 [node name="BtnDOff" type="Sprite" parent="."]
-position = Vector2( 856, 249 )
-texture = ExtResource( 5 )
+position = Vector2( 879, 459 )
+texture = ExtResource( 9 )
 centered = false

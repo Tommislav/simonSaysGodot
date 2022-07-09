@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/EddaVoff1.wav-da23ac4d7734a8d5b66c2f91bc0892e7.sample"
+
+[deps]
+
+source_file="res://sfx/EddaVoff1.wav"
+dest_files=[ "res://.import/EddaVoff1.wav-da23ac4d7734a8d5b66c2f91bc0892e7.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop=false
+compress/mode=0
