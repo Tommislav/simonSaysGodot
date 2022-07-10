@@ -1,8 +1,10 @@
 using Godot;
 using System;
+using System.Collections.Generic;
 
 public class Simon : Node {
 
+    // --- temporary sound list ---
     [Export]
     public AudioStream sound1;
     [Export]
@@ -11,20 +13,42 @@ public class Simon : Node {
     public AudioStream sound3;
     [Export]
     public AudioStream sound4;
+    // --- temporary sound list ---
     
     private Node2D[] clickables;
     private Node2D[] buttonsOn;
     private Node2D[] buttonsOff;
-    private AudioStream[] sounds;
+    private AudioStream[] soundList;
     private AudioStreamPlayer2D audioPlayer;
 
 
+
+    // Here are the game specific variables we need
+
+    private enum Cmd {
+        StartNewGame,
+        StartNextRound,
+        ShowNextButtonInSequence,
+        ClearAllButtons,
+        AwaitPlayerInput,
+        GameOver
+    }
+    private Cmd nextCommand; // What command to execute once countdown is <= zero
+    private float countdown; // Pause execution of next command
+    private List<int> sequence = new List<int>(); // list of order, 0-3
+    private List<int> playerInput = new List<int>();
+    private int sequenceIndex; // where in the sequence are we?
+    private System.Random rng;
+
+
+
+
     public override void _Ready() {
-        GD.Print("hej");
+        rng = new System.Random();
 
         audioPlayer = GetNode<AudioStreamPlayer2D>("AudioPlayer");
 
-        sounds = new[] { sound1, sound2, sound3, sound4 };
+        soundList = new[] { sound1, sound2, sound3, sound4 };
         
         clickables = new Node2D[4];
         buttonsOn = new Node2D[4];
@@ -73,42 +97,128 @@ public class Simon : Node {
             buttonsOn[i].Visible = false;
         }
 
-        
+        nextCommand = Cmd.StartNewGame;
     }
 
     private void BtnADn() { OnButtonDn(0); }
-     private void BtnBDn() { OnButtonDn(1); }
+    private void BtnBDn() { OnButtonDn(1); }
     private void BtnCDn() { OnButtonDn(2); }
     private void BtnDDn() { OnButtonDn(3); }
 
     private void BtnAUp() { OnButtonUp(0); }
-     private void BtnBUp() { OnButtonUp(1); }
+    private void BtnBUp() { OnButtonUp(1); }
     private void BtnCUp() { OnButtonUp(2); }
     private void BtnDUp() { OnButtonUp(3); }
 
 
     private void OnButtonDn(int i) {
-        audioPlayer.Stream = sounds[i];
-        audioPlayer.Play();
         SetButtonState(i, true);
     }
     private void OnButtonUp(int i) {
         SetButtonState(i, false);
     }
 
-    private void SetButtonState(int b, bool on) {
+    private void SetButtonState(int b, bool on, bool muteSounds=false) {
         for(int i = 0; i < 4; i++) {
             buttonsOff[i].Visible = b != i || !on;
             buttonsOn[i].Visible = b == i && on;
         }
+
+        if (on && !muteSounds) {
+            audioPlayer.Stream = soundList[b];
+            audioPlayer.Play();
+        }
+        if (!on && nextCommand == Cmd.AwaitPlayerInput) {
+            playerInput.Add(b);
+        }
+    }
+
+    private void SetButtonsClickable(bool on) {
+        for(int i = 0; i < 4; i++) { clickables[i].Visible = on; }
     }
 
 
+    public override void _Process(float delta) {
+        countdown -= delta;
+        if (countdown > 0) { return; }
+
+        switch(nextCommand) {
+            case Cmd.StartNewGame: {
+                sequence.Clear();
+                SetButtonsClickable(false);
+                nextCommand = Cmd.StartNextRound;
+                break;
+            }
+            case Cmd.StartNextRound: {
+                playerInput.Clear();
+                sequence.Add(rng.Next(0,4));
+                sequenceIndex = 0;
+                SetButtonsClickable(false);
+                countdown = 1f;
+                nextCommand = Cmd.ShowNextButtonInSequence;
+                break;
+            }
+            case Cmd.ShowNextButtonInSequence: {
+                if (sequenceIndex < sequence.Count) {
+                    SetButtonState(sequence[sequenceIndex], true);
+                    nextCommand = Cmd.ClearAllButtons;
+                    countdown = 0.7f;
+                    sequenceIndex++;
+                }
+                else {
+                    SetButtonsClickable(true);
+                    sequenceIndex = 0;
+                    nextCommand = Cmd.AwaitPlayerInput;
+                }
+                break;
+            }
+            case Cmd.ClearAllButtons: {
+                for (int i=0; i<4; i++) { SetButtonState(i, false); }
+                countdown = 0.3f;
+                nextCommand = Cmd.ShowNextButtonInSequence;
+                break;
+            }
+
+            case Cmd.AwaitPlayerInput: {
+                bool invalid = false;
+                int num = Mathf.Min(sequence.Count, playerInput.Count);
+                for (int i=0; i<num; i++) {
+                    if (sequence[i] != playerInput[i]) {
+                        invalid = true;
+                    }
+                }
+                if (invalid) {
+                    SetButtonsClickable(false);
+                    nextCommand = Cmd.GameOver;
+                    sequenceIndex = 0;
+                }
+                else if (sequence.Count == playerInput.Count) {
+                    nextCommand = Cmd.StartNextRound;
+                }
+
+                break;
+            }
+            case Cmd.GameOver: {
+
+                int btnIndex = sequenceIndex % 4;
+                if (btnIndex == 2) btnIndex = 3;
+                else if (btnIndex == 3) btnIndex = 2;
+                SetButtonState(btnIndex, true, true);
+                countdown = 0.08f;
+                sequenceIndex++;
+
+                if (sequenceIndex > 30) {
+                    SetButtonState(0, false);
+                    nextCommand = Cmd.StartNewGame;
+                }
+
+                break;
+            }
+
+        }
 
 
-//  // Called every frame. 'delta' is the elapsed time since the previous frame.
-//  public override void _Process(float delta)
-//  {
-//      
-//  }
+
+
+    }
 }
