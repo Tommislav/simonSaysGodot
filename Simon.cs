@@ -24,8 +24,8 @@ public class Simon : Node {
     private Node2D[] buttonsOn;
     private Node2D[] buttonsOff;
     private AudioStream[] soundList;
-    private AudioStreamPlayer2D audioPlayer;
-    private AudioStreamPlayer2D audioEffectsPlayer;
+    private AudioStreamPlayer2D buttonClickAudioPlayer;
+    private AudioStreamPlayer2D gameStateAudioPlayer;
 
 
 
@@ -52,8 +52,8 @@ public class Simon : Node {
     public override void _Ready() {
         rng = new System.Random();
 
-        audioPlayer = GetNode<AudioStreamPlayer2D>("AudioPlayer");
-        audioEffectsPlayer = GetNode<AudioStreamPlayer2D>("Effects");
+        buttonClickAudioPlayer = GetNode<AudioStreamPlayer2D>("ButtonClickAudioPlayer");
+        gameStateAudioPlayer = GetNode<AudioStreamPlayer2D>("GameStateAudioPlayer");
 
         soundList = new[] { sound1, sound2, sound3, sound4 };
         
@@ -61,10 +61,8 @@ public class Simon : Node {
         buttonsOn = new Node2D[4];
         buttonsOff = new Node2D[4];
 
-        string[] buttonLabels = new []{
-            "BtnA", "BtnB", "BtnC", "BtnD"
-        };
-
+        // setup button callbacks and size/positions
+        string[] buttonLabels = new []{ "BtnA", "BtnB", "BtnC", "BtnD" };
 
         var viewportSize = GetViewport().Size;
         float w = Mathf.Min(viewportSize.x, viewportSize.y);
@@ -73,16 +71,22 @@ public class Simon : Node {
         float buttonExpectedW = w / 2f;
         float halfW = viewportSize.x / 2f;
         float halfH = viewportSize.y / 2f;
+        float halfM = margin / 2f;
 
-        // assume all buttons are same size (for now)
+        // assume all buttons/assets are same widht/height (at least for now)
         var size = GetNode<Sprite>(buttonLabels[0] + "On").Texture.GetSize();
         Vector2 scale = new Vector2(buttonExpectedW / size.x, buttonExpectedW / size.y);
 
+        float x1 = halfW - buttonExpectedW - halfM;
+        float x2 = halfW + halfM;
+        float y1 = halfH - buttonExpectedW - halfM;
+        float y2 = halfH + halfM;
+
         Vector2[] positions = new[] {
-            new Vector2(margin, margin),
-            new Vector2(buttonExpectedW + margin * 2, margin),
-            new Vector2(margin, buttonExpectedW + margin * 2),
-            new Vector2(buttonExpectedW + margin * 2, buttonExpectedW + margin * 2)
+            new Vector2(x1, y1),
+            new Vector2(x2, y1),
+            new Vector2(x1, y2),
+            new Vector2(x2, y2)
         };
         
         for (int i=0; i<4; i++) {
@@ -107,23 +111,16 @@ public class Simon : Node {
         nextCommand = Cmd.StartNewGame;
     }
 
-    private void BtnADn() { OnButtonDn(0); }
-    private void BtnBDn() { OnButtonDn(1); }
-    private void BtnCDn() { OnButtonDn(2); }
-    private void BtnDDn() { OnButtonDn(3); }
+    private void BtnADn() { SetButtonState(0, true); }
+    private void BtnBDn() { SetButtonState(1, true); }
+    private void BtnCDn() { SetButtonState(2, true); }
+    private void BtnDDn() { SetButtonState(3, true); }
 
-    private void BtnAUp() { OnButtonUp(0); }
-    private void BtnBUp() { OnButtonUp(1); }
-    private void BtnCUp() { OnButtonUp(2); }
-    private void BtnDUp() { OnButtonUp(3); }
+    private void BtnAUp() { SetButtonState(0, false); }
+    private void BtnBUp() { SetButtonState(1, false); }
+    private void BtnCUp() { SetButtonState(2, false); }
+    private void BtnDUp() { SetButtonState(3, false); }
 
-
-    private void OnButtonDn(int i) {
-        SetButtonState(i, true);
-    }
-    private void OnButtonUp(int i) {
-        SetButtonState(i, false);
-    }
 
     private void SetButtonState(int b, bool on, bool muteSounds=false) {
         for(int i = 0; i < 4; i++) {
@@ -132,8 +129,8 @@ public class Simon : Node {
         }
 
         if (on && !muteSounds) {
-            audioPlayer.Stream = soundList[b];
-            audioPlayer.Play();
+            buttonClickAudioPlayer.Stream = soundList[b];
+            buttonClickAudioPlayer.Play();
         }
         if (!on && nextCommand == Cmd.AwaitPlayerInput) {
             playerInput.Add(b);
@@ -157,8 +154,8 @@ public class Simon : Node {
                 break;
             }
             case Cmd.StartNextRound: {
-                audioEffectsPlayer.Stream = newRoundSound;
-                audioEffectsPlayer.Play();
+                gameStateAudioPlayer.Stream = newRoundSound;
+                gameStateAudioPlayer.Play();
 
                 playerInput.Clear();
                 sequence.Add(rng.Next(0,4));
@@ -202,8 +199,8 @@ public class Simon : Node {
                     nextCommand = Cmd.GameOver;
                     sequenceIndex = 0;
 
-                    audioEffectsPlayer.Stream = gameOverSound;
-                    audioEffectsPlayer.Play();
+                    gameStateAudioPlayer.Stream = gameOverSound;
+                    gameStateAudioPlayer.Play();
                 }
                 else if (sequence.Count == playerInput.Count) {
                     nextCommand = Cmd.StartNextRound;

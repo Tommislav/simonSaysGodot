@@ -84,6 +84,6 @@ position = Vector2( 879, 459 )
 texture = ExtResource( 9 )
 centered = false
 
-[node name="AudioPlayer" type="AudioStreamPlayer2D" parent="."]
+[node name="ButtonClickAudioPlayer" type="AudioStreamPlayer2D" parent="."]
 
-[node name="Effects" type="AudioStreamPlayer2D" parent="."]
+[node name="GameStateAudioPlayer" type="AudioStreamPlayer2D" parent="."]
