@@ -13,6 +13,11 @@ public class Simon : Node {
     public AudioStream sound3;
     [Export]
     public AudioStream sound4;
+
+    [Export]
+    public AudioStream newRoundSound;
+    [Export]
+    public AudioStream gameOverSound;
     // --- temporary sound list ---
     
     private Node2D[] clickables;
@@ -20,6 +25,7 @@ public class Simon : Node {
     private Node2D[] buttonsOff;
     private AudioStream[] soundList;
     private AudioStreamPlayer2D audioPlayer;
+    private AudioStreamPlayer2D audioEffectsPlayer;
 
 
 
@@ -47,6 +53,7 @@ public class Simon : Node {
         rng = new System.Random();
 
         audioPlayer = GetNode<AudioStreamPlayer2D>("AudioPlayer");
+        audioEffectsPlayer = GetNode<AudioStreamPlayer2D>("Effects");
 
         soundList = new[] { sound1, sound2, sound3, sound4 };
         
@@ -150,6 +157,9 @@ public class Simon : Node {
                 break;
             }
             case Cmd.StartNextRound: {
+                audioEffectsPlayer.Stream = newRoundSound;
+                audioEffectsPlayer.Play();
+
                 playerInput.Clear();
                 sequence.Add(rng.Next(0,4));
                 sequenceIndex = 0;
@@ -173,7 +183,7 @@ public class Simon : Node {
                 break;
             }
             case Cmd.ClearAllButtons: {
-                for (int i=0; i<4; i++) { SetButtonState(i, false); }
+                SetButtonState(0, false);
                 countdown = 0.3f;
                 nextCommand = Cmd.ShowNextButtonInSequence;
                 break;
@@ -191,9 +201,14 @@ public class Simon : Node {
                     SetButtonsClickable(false);
                     nextCommand = Cmd.GameOver;
                     sequenceIndex = 0;
+
+                    audioEffectsPlayer.Stream = gameOverSound;
+                    audioEffectsPlayer.Play();
                 }
                 else if (sequence.Count == playerInput.Count) {
                     nextCommand = Cmd.StartNextRound;
+                    SetButtonsClickable(false);
+                    countdown = 0.5f;
                 }
 
                 break;
