@@ -27,8 +27,6 @@ public class Simon : Node {
     private AudioStreamPlayer2D buttonClickAudioPlayer;
     private AudioStreamPlayer2D gameStateAudioPlayer;
 
-
-
     // Here are the game specific variables we need
 
     private enum Cmd {
@@ -45,10 +43,8 @@ public class Simon : Node {
     private List<int> playerInput = new List<int>();
     private int sequenceIndex; // where in the sequence are we?
     private System.Random rng;
-
-
-
-
+    
+    
     public override void _Ready() {
         rng = new System.Random();
 
@@ -91,8 +87,7 @@ public class Simon : Node {
         
         for (int i=0; i<4; i++) {
             buttonsOn[i] = GetNode<Node2D>(buttonLabels[i] + "On");
-            
-            
+                        
             var n = GetNode<Node2D>(buttonLabels[i]);
             n.Connect("pressed", this, buttonLabels[i] + "Dn");
             n.Connect("released", this, buttonLabels[i] + "Up");
@@ -226,11 +221,6 @@ public class Simon : Node {
 
                 break;
             }
-
         }
-
-
-
-
     }
 }
